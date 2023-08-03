@@ -36,14 +36,32 @@ def login():
         else:
             role = out['ROLE']
             if role==0:
-               return render_template("adminProfile.html") 
+               return render_template("adminProfile1.html",name=out['NAME']) 
             elif role==1:
                 return render_template("facultyProfile.html") 
             elif role==2:
                 return render_template("studentProfile.html") 
-
-
     return render_template("login.html")
+
+@app.route('/registration',methods=["GET","POST"])
+def registration():
+    if request.method=="POST":
+        name = request.form['name']
+        uname = request.form['username']
+        email = request.form['email']
+        pword = request.form['password']
+        role = int(request.form['role'])
+
+        sql = 'INSERT INTO REGISTER VALUES(?,?,?,?,?)'
+        stmt = ibm_db.prepare(conn,sql)
+        ibm_db.bind_param(stmt,1,name)
+        ibm_db.bind_param(stmt,2,uname)
+        ibm_db.bind_param(stmt,3,email)
+        ibm_db.bind_param(stmt,4,pword)
+        ibm_db.bind_param(stmt,5,role)
+        ibm_db.execute(stmt)
+        
+    return render_template("adminProfile1.html")
 
 if __name__ == "__main__":
     app.run(debug= True)
